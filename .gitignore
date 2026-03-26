@@ -1,0 +1,39 @@
+# API anahtarları ve gizli veriler
+.env
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# Sanal ortam
+venv/
+.venv/
+env/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# ChromaDB ve veri klasörleri (büyük/yerel veri)
+chroma_db/
+cache/
+
+# Log dosyaları
+*.log
+ingestion_log.json
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Claude memory
+memory/

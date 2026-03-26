@@ -1,0 +1,99 @@
+{
+  "name": "📋 MRO Batch Processor",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 9 * * *"
+            }
+          ]
+        }
+      },
+      "id": "cron-trigger",
+      "name": "Daily 09:00 Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [250, 300]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "mro-batch",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "manual-trigger",
+      "name": "Manual Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [250, 500],
+      "webhookId": "mro-batch-001"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://localhost:8100/batch",
+        "options": {
+          "timeout": 600000
+        }
+      },
+      "id": "batch-process",
+      "name": "Batch Process All PDFs",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [500, 400]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}",
+        "options": {}
+      },
+      "id": "respond-batch",
+      "name": "Respond Batch Result",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [750, 500]
+    },
+    {
+      "parameters": {
+        "jsCode": "const result = $input.first().json;\nconsole.log(`MRO Batch: ${result.success || 0} başarılı, ${result.failed || 0} hatalı`);\nreturn [{ json: result }];"
+      },
+      "id": "log-result",
+      "name": "Log Result",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [750, 300]
+    }
+  ],
+  "connections": {
+    "Daily 09:00 Trigger": {
+      "main": [
+        [{ "node": "Batch Process All PDFs", "type": "main", "index": 0 }]
+      ]
+    },
+    "Manual Webhook": {
+      "main": [
+        [{ "node": "Batch Process All PDFs", "type": "main", "index": 0 }]
+      ]
+    },
+    "Batch Process All PDFs": {
+      "main": [
+        [
+          { "node": "Log Result", "type": "main", "index": 0 },
+          { "node": "Respond Batch Result", "type": "main", "index": 0 }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "tags": [
+    { "name": "MRO" }
+  ]
+}

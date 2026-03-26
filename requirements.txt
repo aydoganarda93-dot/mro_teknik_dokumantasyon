@@ -1,0 +1,33 @@
+# MRO Teknik Dokümantasyon Aracısı — Bağımlılıklar
+
+# PDF İşleme
+pymupdf>=1.24.0
+
+# Vektör Veritabanı
+chromadb>=0.5.0
+
+# Embedding (lokal)
+sentence-transformers>=3.0.0
+
+# LLM — Ollama (lokal) ve Groq (bulut) için OpenAI uyumlu istemci
+openai>=1.50.0
+# Opsiyonel: Anthropic Claude kullanmak isteyenler için
+# anthropic>=0.86.0
+
+# RAG Framework (minimal kullanım)
+langchain-core>=0.3.0
+langchain-text-splitters>=0.3.0
+
+# API Server
+fastapi>=0.115.0
+uvicorn>=0.32.0
+
+# GUI
+customtkinter>=5.2.0
+pillow>=10.0.0
+
+# Config
+python-dotenv>=1.0.0
+
+# Opsiyonel: Voyage AI embedding
+# voyageai>=0.3.0
