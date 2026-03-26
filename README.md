@@ -1,66 +1,66 @@
-# MRO Teknik Dokümantasyon Sistemi
+# MRO Technical Documentation System
 
-Havacılık MRO (Bakım, Onarım, Revizyon) PDF dokümanlarını işleyip **RAG (Retrieval Augmented Generation)** ile akıllı teknik arama yapan masaüstü + API uygulaması.
-
----
-
-## Özellikler
-
-- PDF'den otomatik metin, tablo ve bölüm çıkarma (PyMuPDF)
-- ATA 100 bölüm numarası, parça no, SB/AD referansı tespiti
-- Lokal embedding üretimi (internet bağlantısı gerekmez)
-- ChromaDB ile kalıcı vektör indeksleme
-- Groq LLM ile hızlı ve ücretsiz RAG sorgusu
-- Kaynak referanslı yanıt (doküman, sayfa, ATA bölümü)
-- FastAPI sunucusu üzerinden REST API
-- Profesyonel customtkinter masaüstü arayüzü
-- n8n webhook entegrasyonu
+A desktop + API application that processes aviation MRO (Maintenance, Repair & Overhaul) PDF documents and enables intelligent technical search via **RAG (Retrieval Augmented Generation)**.
 
 ---
 
-## Teknoloji Yığını
+## Features
 
-| Katman | Teknoloji |
+- Automatic text, table, and section extraction from PDFs (PyMuPDF)
+- ATA 100 chapter detection, part number and SB/AD reference extraction
+- Local embedding generation (no internet required)
+- Persistent vector indexing with ChromaDB
+- Fast, free RAG queries via Groq LLM
+- Source-referenced answers (document, page, ATA chapter)
+- REST API via FastAPI server
+- Professional customtkinter desktop GUI
+- n8n webhook integration
+
+---
+
+## Tech Stack
+
+| Layer | Technology |
 |---|---|
-| PDF İşleme | PyMuPDF 1.24+ |
-| Embedding | sentence-transformers/all-MiniLM-L6-v2 (lokal, 384-dim) |
-| Vektör DB | ChromaDB (kalıcı) |
-| LLM | Groq — llama-3.3-70b-versatile (ücretsiz) |
-| API Sunucusu | FastAPI + uvicorn (port 8100) |
-| Masaüstü GUI | customtkinter 5.x |
-| Otomasyon | n8n webhook |
-| Yapılandırma | python-dotenv + mro_config.json |
+| PDF Processing | PyMuPDF 1.24+ |
+| Embedding | sentence-transformers/all-MiniLM-L6-v2 (local, 384-dim) |
+| Vector DB | ChromaDB (persistent) |
+| LLM | Groq — llama-3.3-70b-versatile (free) |
+| API Server | FastAPI + uvicorn (port 8100) |
+| Desktop GUI | customtkinter 5.x |
+| Automation | n8n webhook |
+| Configuration | python-dotenv + mro_config.json |
 
 ---
 
-## Kurulum
+## Setup
 
-### 1. Repoyu klonlayın
+### 1. Clone the repository
 
 ```bash
 git clone https://github.com/aydoganarda93-dot/mro_teknik_dokumantasyon.git
 cd mro_teknik_dokumantasyon
 ```
 
-### 2. Bağımlılıkları kurun
+### 2. Install dependencies
 
 ```bash
 pip install -r requirements.txt
 ```
 
-> İlk çalıştırmada embedding modeli (~90 MB) otomatik indirilir.
+> The embedding model (~90 MB) is downloaded automatically on first run.
 
-### 3. Groq API key alın
+### 3. Get a Groq API key
 
-[console.groq.com](https://console.groq.com) adresinden ücretsiz kayıt olup API key oluşturun.
+Sign up for free at [console.groq.com](https://console.groq.com) and create an API key.
 
-### 4. `.env` dosyasını oluşturun
+### 4. Create the `.env` file
 
 ```bash
 copy .env.example .env
 ```
 
-`.env` dosyasını açıp `GROQ_API_KEY` satırını doldurun:
+Open `.env` and fill in your `GROQ_API_KEY`:
 
 ```env
 LLM_PROVIDER=groq
@@ -69,15 +69,15 @@ EMBEDDING_MODE=local
 MRO_DOCS_DIR=D:\mro_docs
 ```
 
-### 5. Uygulamayı başlatın
+### 5. Start the application
 
-**Ingestion sunucusunu** ayrı bir terminalde başlatın:
+Start the **ingestion server** in a separate terminal:
 
 ```bash
 baslat_server.bat
 ```
 
-**Masaüstü arayüzünü** başlatın:
+Launch the **desktop GUI**:
 
 ```bash
 baslat_gui.bat
@@ -85,45 +85,45 @@ baslat_gui.bat
 
 ---
 
-## Kullanım
+## Usage
 
-### PDF Yükleme
+### Loading PDFs
 
-1. GUI'de **PDF Seç ve Yükle** butonuna tıklayın.
-2. PDF işlendikten sonra "Son Yüklemenin Özeti" kutusunda doküman metadata bilgileri gösterilir (tip, sayfa sayısı, ATA bölümleri, parça numaraları vb.).
+1. Click **PDF Seç ve Yükle** (Select & Upload PDF) in the GUI.
+2. Once processed, the "Last Upload Summary" panel displays document metadata — type, page count, ATA chapters, part numbers, SB/AD references, and table count.
 
-Toplu yükleme için PDF'leri `D:\mro_docs\inbox` klasörüne bırakın ve **Toplu Yükle** butonuna tıklayın.
+For bulk loading, drop PDFs into `D:\mro_docs\inbox` and click **Toplu Yükle** (Batch Upload).
 
-### Teknik Sorgu
+### Technical Queries
 
-Sorgu kutusuna ATA bölüm numarası, parça numarası veya serbest metin yazıp **Sorguyu Çalıştır** butonuna tıklayın.
+Type an ATA chapter number, part number, or free-text query into the search box and click **Sorguyu Çalıştır** (Run Query).
 
-**Örnek sorgular:**
+**Example queries:**
 
 ```
-ATA 32-10-01 iniş takımı sökme prosedürü nedir?
-P/N 5001234-01 parçası hangi ATA bölümüne aittir?
-Hydraulic system pressure check CAUTION uyarıları
+ATA 32-10-01 landing gear removal procedure
+P/N 5001234-01 which ATA chapter does this part belong to?
+Hydraulic system pressure check CAUTION warnings
 ```
 
-Yanıtın altında kaynak doküman, sayfa numarası ve ATA referansı gösterilir.
+Each answer includes the source document, page number, and ATA reference.
 
 ---
 
-## API Referansı (port 8100)
+## API Reference (port 8100)
 
-| Metot | Yol | Açıklama |
+| Method | Path | Description |
 |---|---|---|
-| `POST` | `/process` | Tek PDF işle ve indeksle |
-| `POST` | `/search` | RAG sorgusu çalıştır |
-| `POST` | `/batch` | inbox klasöründeki tüm PDF'leri işle |
-| `GET` | `/stats` | Vektör deposu istatistikleri |
-| `GET` | `/documents` | İndekslenmiş doküman listesi |
-| `DELETE` | `/documents/{doc_id}` | Doküman sil |
-| `GET` | `/health` | Sağlık kontrolü |
-| `GET` | `/log` | İşleme geçmişi |
+| `POST` | `/process` | Process and index a single PDF |
+| `POST` | `/search` | Run a RAG query |
+| `POST` | `/batch` | Process all PDFs in the inbox folder |
+| `GET` | `/stats` | Vector store statistics |
+| `GET` | `/documents` | List indexed documents |
+| `DELETE` | `/documents/{doc_id}` | Delete a document |
+| `GET` | `/health` | Health check |
+| `GET` | `/log` | Ingestion history |
 
-**Örnek sorgu:**
+**Example query:**
 
 ```bash
 curl -X POST http://localhost:8100/search \
@@ -133,54 +133,54 @@ curl -X POST http://localhost:8100/search \
 
 ---
 
-## Dizin Yapısı
+## Directory Structure
 
 ```
 mro_teknik_dokumantasyon/
-├── main.py                     # Bağımsız GUI başlatıcı
-├── mro_config.py               # Yapılandırma yöneticisi
+├── main.py                     # Standalone GUI launcher
+├── mro_config.py               # Configuration manager
 ├── requirements.txt
-├── .env.example                # Örnek ortam değişkenleri
-├── baslat_server.bat           # Ingestion sunucu başlatıcı
-├── baslat_gui.bat              # GUI başlatıcı
+├── .env.example                # Environment variable template
+├── baslat_server.bat           # Ingestion server launcher
+├── baslat_gui.bat              # GUI launcher
 ├── mro/
-│   ├── pdf_processor.py        # PDF ayrıştırma
-│   ├── chunker.py              # ATA-farkında akıllı parçalama
-│   ├── metadata_extractor.py   # Parça no, ATA, SB/AD çıkarma
-│   ├── embedder.py             # Embedding üretimi
-│   ├── vector_store.py         # ChromaDB işlemleri
+│   ├── pdf_processor.py        # PDF parsing
+│   ├── chunker.py              # ATA-aware smart chunking
+│   ├── metadata_extractor.py   # Part no, ATA, SB/AD extraction
+│   ├── embedder.py             # Embedding generation
+│   ├── vector_store.py         # ChromaDB operations
 │   ├── rag_engine.py           # RAG pipeline
-│   ├── ingestion_server.py     # FastAPI sunucusu
-│   ├── mro_domain.py           # ATA haritası, regex desenleri
-│   └── n8n_mro_client.py       # n8n webhook istemcisi
+│   ├── ingestion_server.py     # FastAPI server
+│   ├── mro_domain.py           # ATA map, regex patterns
+│   └── n8n_mro_client.py       # n8n webhook client
 ├── ui/
-│   └── mro_panel.py            # Masaüstü GUI paneli
+│   └── mro_panel.py            # Desktop GUI panel
 └── n8n_workflows/
     ├── mro_ingest_workflow.json
     └── mro_batch_workflow.json
 
-D:\mro_docs\                    # Veri klasörü (otomatik oluşturulur)
-├── inbox\                      # PDF'leri buraya bırakın
-├── processed\                  # İşlenen dokümanlar
-├── failed\                     # Hatalı dokümanlar
-├── chroma_db\                  # Vektör veritabanı
-└── cache\                      # Metin önbelleği
+D:\mro_docs\                    # Data folder (created automatically)
+├── inbox\                      # Drop PDFs here
+├── processed\                  # Successfully processed documents
+├── failed\                     # Failed documents
+├── chroma_db\                  # Vector database
+└── cache\                      # Text extraction cache
 ```
 
 ---
 
-## Alternatif LLM Sağlayıcıları
+## Alternative LLM Providers
 
-`.env` dosyasında `LLM_PROVIDER` değerini değiştirerek farklı sağlayıcılar kullanılabilir:
+Change `LLM_PROVIDER` in your `.env` file to switch providers:
 
-| Sağlayıcı | Hız | Maliyet | Gereksinim |
+| Provider | Speed | Cost | Requirement |
 |---|---|---|---|
-| `groq` | Çok hızlı | Ücretsiz | GROQ_API_KEY |
-| `ollama` | Yavaş | Ücretsiz | Lokal Ollama kurulumu |
-| `anthropic` | Hızlı | Ücretli | ANTHROPIC_API_KEY |
+| `groq` | Very fast | Free | GROQ_API_KEY |
+| `ollama` | Slow | Free | Local Ollama installation |
+| `anthropic` | Fast | Paid | ANTHROPIC_API_KEY |
 
 ---
 
-## Lisans
+## License
 
 MIT
